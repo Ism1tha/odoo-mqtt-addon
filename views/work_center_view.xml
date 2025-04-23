@@ -1,0 +1,20 @@
+<odoo>
+    <record id="view_workcenter_form_inherit_mqtt" model="ir.ui.view">
+        <field name="name">mrp.workcenter.form.inherit</field>
+        <field name="model">mrp.workcenter</field>
+        <field name="inherit_id" ref="mrp.mrp_workcenter_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="after">
+                <notebook>
+                    <page string="MQTT" name="mqtt">
+                        <group>
+                            <field name="has_robots"/>
+                            <field name="robot_ids"/>
+                            <field name="topic"/>
+                        </group>
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+</odoo>
