@@ -24,7 +24,7 @@ jobs:
       - name: Create folder_name and copy files
         run: |
           mkdir mqtt-integration
-          rsync -av --exclude='.*' --exclude='mqtt-integration' ./ mqtt-integration/
+          rsync -av --exclude='.*' --exclude='mqtt-integration' --exclude='README.md' ./ mqtt-integration/
 
       - name: Zip mqtt-integration
         run: |
