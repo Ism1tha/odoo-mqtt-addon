@@ -21,7 +21,7 @@ jobs:
           echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
           echo "ZIP_NAME=mqtt-integration-${GITHUB_REF#refs/tags/}.zip" >> $GITHUB_ENV
 
-      - name: Create folder_name and copy files
+      - name: Create temporary folder and move files
         run: |
           mkdir mqtt-integration
           rsync -av --exclude='.*' --exclude='mqtt-integration' --exclude='README.md' ./ mqtt-integration/
