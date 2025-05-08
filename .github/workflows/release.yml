@@ -19,16 +19,16 @@ jobs:
       - name: Set tag name and zip filename
         run: |
           echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-          echo "ZIP_NAME=mqtt-integration-${GITHUB_REF#refs/tags/}.zip" >> $GITHUB_ENV
+          echo "ZIP_NAME=mqtt_integration-${GITHUB_REF#refs/tags/}.zip" >> $GITHUB_ENV
 
       - name: Create temporary folder and move files
         run: |
-          mkdir mqtt-integration
-          rsync -av --exclude='.*' --exclude='mqtt-integration' --exclude='README.md' ./ mqtt-integration/
+          mkdir mqtt_integration
+          rsync -av --exclude='.*' --exclude='mqtt_integration' --exclude='README.md' ./ mqtt_integration/
 
-      - name: Zip mqtt-integration
+      - name: Zip mqtt_integration
         run: |
-          zip -r $ZIP_NAME mqtt-integration
+          zip -r $ZIP_NAME mqtt_integration
 
       - name: Create GitHub Release and upload asset
         uses: softprops/action-gh-release@v1

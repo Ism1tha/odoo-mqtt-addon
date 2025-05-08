@@ -5,7 +5,7 @@
         <field name="inherit_id" ref="base.res_config_settings_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//form" position="inside">
-                <app data-string="MQTT" string="MQTT" name="mqtt" groups="base.group_system" logo="/mqtt_interface/static/description/icon.png">
+                <app data-string="MQTT" string="MQTT" name="mqtt" groups="base.group_system" logo="/mqtt_integration/static/description/icon.png">
                     <block title="MQTT Configuration" name="mqtt_setting_container">
                         <setting id="mqtt_host" help="The of the API server" documentation="https://github.com/Ism1tha/odoo-mqtt-api">
                             <field name="mqtt_api_host" string="Host"/>
