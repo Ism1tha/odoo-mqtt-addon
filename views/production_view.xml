@@ -1,0 +1,16 @@
+<odoo>
+  <record id="view_mrp_production_form_inherit_mqtt" model="ir.ui.view">
+    <field name="name">mrp.production.form.inherit.mqtt</field>
+    <field name="model">mrp.production</field>
+    <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+    <field name="arch" type="xml">
+      <xpath expr="//header//button" position="attributes">
+        <attribute name="modifiers">{'invisible': [('show_start_mqtt', '=', True)]}</attribute>
+      </xpath>
+      <xpath expr="//header" position="inside">
+        <button name="action_start_mqtt_processing" string="Start MQTT" type="object" class="oe_highlight" invisible="not show_start_mqtt" />
+        <button name="action_stop_mqtt_processing" string="Stop MQTT" type="object" class="oe_highlight" invisible="not show_start_mqtt" />
+      </xpath>
+    </field>
+  </record>
+</odoo>

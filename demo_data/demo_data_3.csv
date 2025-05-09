@@ -1,0 +1,7 @@
+Activity Exception Decoration,Cost,Favorite,Forecasted Quantity,Internal Reference,Name,Quantity On Hand,Sales Price,Tags,MQTT Material Binary,MQTT Product Type,Result Product,Result Product Quantity
+,0.50,,0.0,MAT_001,Material 1,0.0,0.50,,100000,material,Result Product 1,1.0
+,0.50,,0.0,MAT_002,Material 2,0.0,0.50,,010000,material,Result Product 2,1.0
+,0.50,,0.0,MAT_003,Material 3,0.0,0.50,,001000,material,Result Product 3,1.0
+,0.50,,0.0,MAT_004,Material 4,0.0,0.50,,000100,material,Result Product 4,1.0
+,0.50,,0.0,MAT_005,Material 5,0.0,0.50,,000010,material,Result Product 5,1.0
+,0.50,,0.0,MAT_006,Material 6,0.0,0.50,,000001,material,Result Product 6,1.0

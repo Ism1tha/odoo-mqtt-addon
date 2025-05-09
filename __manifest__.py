@@ -8,12 +8,18 @@
     "version": "1.0",
     "license": "GPL-3",
     "depends": ["base", "mrp"],
+    'assets': {
+        'web.assets_backend': [
+            'mqtt_integration/static/src/js/form_renderer_patch.js',
+        ],
+    },
     "data": [
         "security/ir.model.access.csv",
         "views/work_center_view.xml",
         "views/robot_view.xml",
         "views/res_config_settings.xml",
         "views/product_template_view.xml",
+        "views/production_view.xml",
     ],
     "application": True,
 }
