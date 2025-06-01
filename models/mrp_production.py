@@ -236,8 +236,6 @@ class MrpProduction(models.Model):
             return True
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 404:
-                # Task not found - could mean it was already processed/completed
-                # This is acceptable for stopping processing
                 _logger.warning(f"MQTT task {task_id} not found in API (may have been already processed or deleted)")
                 return True  # Consider this a success since the task is gone
             else:
@@ -258,14 +256,12 @@ class MrpProduction(models.Model):
             if production.state != 'mqtt_processing':
                 continue
             
-            # Delete the task from the Node.js API if we have a task ID
             if production.mqtt_task_id:
                 success = production._delete_api_task(production.mqtt_task_id)
                 if not success:
                     _logger.error(f"Failed to delete MQTT task {production.mqtt_task_id} from API for production {production.id}")
                     raise UserError(f'Failed to delete MQTT task from API. Please try again or contact the administrator.')
             
-            # Only proceed with state changes if API deletion was successful
             for wo in production.workorder_ids:
                 wo.write({'state': 'pending'})
             

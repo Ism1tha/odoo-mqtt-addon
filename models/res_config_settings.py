@@ -1,7 +1,4 @@
-from odoo import models, fields, api, _
-from odoo.exceptions import UserError
-import requests
-import json
+from odoo import models, fields
 
 class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
@@ -32,4 +29,3 @@ class ResConfigSettings(models.TransientModel):
         config_parameter="mqtt_integration.mqtt_api_authentication_password",
         help="Password for authenticating with the MQTT API server."
     )
-    
