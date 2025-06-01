@@ -237,7 +237,7 @@ class MrpProduction(models.Model):
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 404:
                 _logger.warning(f"MQTT task {task_id} not found in API (may have been already processed or deleted)")
-                return True  # Consider this a success since the task is gone
+                return True
             else:
                 _logger.error(f"HTTP error deleting MQTT task {task_id} from API for production {self.id}: {e}")
                 return False
