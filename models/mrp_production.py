@@ -183,8 +183,14 @@ class MrpProduction(models.Model):
         
         host = config.get_param('mqtt_integration.mqtt_api_host', 'localhost')
         port = config.get_param('mqtt_integration.mqtt_api_port', '3000')
+        auth_enabled = config.get_param('mqtt_integration.mqtt_api_authentication_enabled', 'False')
+        auth_password = config.get_param('mqtt_integration.mqtt_api_authentication_password', '')
         
         url = f"http://{host}:{port}/api/tasks"
+        
+        headers = {'Content-Type': 'application/json'}
+        if auth_enabled == 'True' and auth_password:
+            headers['Authorization'] = f'Bearer {auth_password}'
         
         data = {
             'odooProductionId': str(self.id),
@@ -201,18 +207,65 @@ class MrpProduction(models.Model):
         }
         
         try:
-            response = requests.post(url, json=data, timeout=10)
+            response = requests.post(url, json=data, headers=headers, timeout=10)
             response.raise_for_status()
             return response.json()
         except Exception as e:
             _logger.error(f"Failed to create MQTT task for production {self.id}: {e}")
             return None
 
+    def _delete_api_task(self, task_id):
+        """Delete a task from the Node.js API"""
+        config = self.env['ir.config_parameter'].sudo()
+        
+        host = config.get_param('mqtt_integration.mqtt_api_host', 'localhost')
+        port = config.get_param('mqtt_integration.mqtt_api_port', '3000')
+        auth_enabled = config.get_param('mqtt_integration.mqtt_api_authentication_enabled', 'False')
+        auth_password = config.get_param('mqtt_integration.mqtt_api_authentication_password', '')
+        
+        url = f"http://{host}:{port}/api/tasks/{task_id}"
+        
+        headers = {}
+        if auth_enabled == 'True' and auth_password:
+            headers['Authorization'] = f'Bearer {auth_password}'
+        
+        try:
+            response = requests.delete(url, headers=headers, timeout=10)
+            response.raise_for_status()
+            _logger.info(f"Successfully deleted MQTT task {task_id} from API for production {self.id}")
+            return True
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 404:
+                # Task not found - could mean it was already processed/completed
+                # This is acceptable for stopping processing
+                _logger.warning(f"MQTT task {task_id} not found in API (may have been already processed or deleted)")
+                return True  # Consider this a success since the task is gone
+            else:
+                _logger.error(f"HTTP error deleting MQTT task {task_id} from API for production {self.id}: {e}")
+                return False
+        except requests.exceptions.ConnectionError as e:
+            _logger.error(f"Connection error deleting MQTT task {task_id} from API for production {self.id}: {e}")
+            return False
+        except requests.exceptions.Timeout as e:
+            _logger.error(f"Timeout error deleting MQTT task {task_id} from API for production {self.id}: {e}")
+            return False
+        except Exception as e:
+            _logger.error(f"Unexpected error deleting MQTT task {task_id} from API for production {self.id}: {e}")
+            return False
+
     def action_stop_mqtt_processing(self):
         for production in self:
             if production.state != 'mqtt_processing':
                 continue
             
+            # Delete the task from the Node.js API if we have a task ID
+            if production.mqtt_task_id:
+                success = production._delete_api_task(production.mqtt_task_id)
+                if not success:
+                    _logger.error(f"Failed to delete MQTT task {production.mqtt_task_id} from API for production {production.id}")
+                    raise UserError(f'Failed to delete MQTT task from API. Please try again or contact the administrator.')
+            
+            # Only proceed with state changes if API deletion was successful
             for wo in production.workorder_ids:
                 wo.write({'state': 'pending'})
             
