@@ -1,21 +1,29 @@
 <odoo>
-    <record id="res_config_settings_view_form" model="ir.ui.view">
-        <field name="name">res.config.settings.view.form.inherit.mqtt</field>
-        <field name="model">res.config.settings</field>
-        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//form" position="inside">
-                <app data-string="MQTT" string="MQTT" name="mqtt" groups="base.group_system" logo="/mqtt_integration/static/description/icon.png">
-                    <block title="MQTT Configuration" name="mqtt_setting_container">
-                        <setting id="mqtt_host" help="The of the API server" documentation="https://github.com/Ism1tha/odoo-mqtt-api">
-                            <field name="mqtt_api_host" string="Host"/>
-                        </setting>
-                        <setting id="mqtt_port" help="The port of the API server" documentation="https://github.com/Ism1tha/odoo-mqtt-api">
-                            <field name="mqtt_api_port" string="Port"/>
-                        </setting>
-                    </block>
-                </app>
-            </xpath>
-        </field>
-    </record>
+  <record id="res_config_settings_view_form" model="ir.ui.view">
+    <field name="name">res.config.settings.view.form.inherit.mqtt</field>
+    <field name="model">res.config.settings</field>
+    <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//form" position="inside">
+        <app data-string="MQTT" string="MQTT" name="mqtt" groups="base.group_system" logo="/mqtt_integration/static/description/icon.png">
+          <block title="MQTT Configuration" name="mqtt_setting_container">
+            <setting id="mqtt_host" help="The of the API server" documentation="https://github.com/Ism1tha/odoo-mqtt-api">
+              <field name="mqtt_api_host" string="Host"/>
+            </setting>
+            <setting id="mqtt_port" help="The port of the API server" documentation="https://github.com/Ism1tha/odoo-mqtt-api">
+              <field name="mqtt_api_port" string="Port"/>
+            </setting>
+          </block>
+          <block title="Authentication" name="mqtt_auth_container">
+            <setting id="mqtt_auth_enabled" help="Enable authentication for the MQTT API server" documentation="https://github.com/Ism1tha/odoo-mqtt-api">
+              <field name="mqtt_api_authentication_enabled" string="Enable Authentication"/>
+            </setting>
+            <setting id="mqtt_auth_password" help="Password for authenticating with the MQTT API server" documentation="https://github.com/Ism1tha/odoo-mqtt-api">
+              <field name="mqtt_api_authentication_password" string="Authentication Password" password="True" invisible="mqtt_api_authentication_enabled != True"/>
+            </setting>
+          </block>
+        </app>
+      </xpath>
+    </field>
+  </record>
 </odoo>

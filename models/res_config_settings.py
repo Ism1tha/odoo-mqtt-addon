@@ -16,3 +16,16 @@ class ResConfigSettings(models.TransientModel):
         default=1883,
         help="Port number used to connect to the MQTT broker (default is 1883)."
     )
+
+    mqtt_api_authentication_enabled = fields.Boolean(
+        string="Enable Authentication",
+        config_parameter="mqtt_integration.mqtt_api_authentication_enabled",
+        default=False,
+        help="Enable authentication for the MQTT API server."
+    )
+
+    mqtt_api_authentication_password = fields.Char(
+        string="Authentication Password",
+        config_parameter="mqtt_integration.mqtt_api_authentication_password",
+        help="Password for authenticating with the MQTT API server."
+    )
