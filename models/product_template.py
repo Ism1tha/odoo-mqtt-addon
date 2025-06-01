@@ -7,22 +7,19 @@ class ProductTemplate(models.Model):
         ('action', 'Action'),
         ('result', 'Transportable Product'),
         ('material', 'Material'),
-    ], string="MQTT Product Type", help="Type of product for MQTT integration")
+    ], string="MQTT Product Type")
 
     mqtt_material_binary = fields.Char(
-        string="MQTT Material Binary",
-        help="6-digit binary string sent to the robot, only for transportable products"
+        string="MQTT Material Binary"
     )
 
     mqtt_material_product_result_id = fields.Many2one(
         comodel_name='product.product',
-        string="Result Product",
-        help="Result product that receives +1 in stock when this material's position is selected"
+        string="Result Product"
     )
 
     mqtt_material_product_result_qty = fields.Float(
-        string="Result Product Quantity",
-        help="Quantity of the result product to be added to stock when this material's position is selected"
+        string="Result Product Quantity"
     )
 
     def action_start_mqtt_processing_on_productions(self):

@@ -6,12 +6,12 @@
     <field name="arch" type="xml">
       <xpath expr="//form" position="inside">
         <app data-string="MQTT" string="MQTT" name="mqtt" groups="base.group_system" logo="/mqtt_integration/static/description/icon.png">
-          <block title="MQTT Configuration" name="mqtt_setting_container">
-            <setting id="mqtt_host" help="The of the API server" documentation="https://github.com/Ism1tha/odoo-mqtt-api">
-              <field name="mqtt_api_host" string="Host"/>
+          <block title="MQTT API Configuration" name="mqtt_setting_container">
+            <setting id="mqtt_host" help="The host of the MQTT API server" documentation="https://github.com/Ism1tha/odoo-mqtt-api">
+              <field name="mqtt_api_host" string="API Host"/>
             </setting>
-            <setting id="mqtt_port" help="The port of the API server" documentation="https://github.com/Ism1tha/odoo-mqtt-api">
-              <field name="mqtt_api_port" string="Port"/>
+            <setting id="mqtt_port" help="The port of the MQTT API server" documentation="https://github.com/Ism1tha/odoo-mqtt-api">
+              <field name="mqtt_api_port" string="API Port"/>
             </setting>
           </block>
           <block title="Authentication" name="mqtt_auth_container">

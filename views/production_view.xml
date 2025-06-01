@@ -4,12 +4,53 @@
     <field name="model">mrp.production</field>
     <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
     <field name="arch" type="xml">
-      <xpath expr="//header//button" position="attributes">
-        <attribute name="modifiers">{'invisible': [('show_start_mqtt', '=', True)]}</attribute>
+      <xpath expr="//header//button[@name='action_confirm']" position="attributes">
+        <attribute name="invisible">is_mqtt_product</attribute>
+      </xpath>
+      <xpath expr="//header//button[@name='button_plan']" position="attributes">
+        <attribute name="invisible">is_mqtt_product</attribute>
+      </xpath>
+      <xpath expr="//header//button[@name='action_assign']" position="attributes">
+        <attribute name="invisible">is_mqtt_product</attribute>
+      </xpath>
+      <xpath expr="//header//button[@name='button_mark_done']" position="attributes">
+        <attribute name="invisible">is_mqtt_product</attribute>
+      </xpath>
+      <xpath expr="//header//button[@name='action_cancel']" position="attributes">
+        <attribute name="invisible">is_mqtt_product</attribute>
       </xpath>
       <xpath expr="//header" position="inside">
-        <button name="action_start_mqtt_processing" string="Start MQTT" type="object" class="oe_highlight" invisible="not show_start_mqtt" />
-        <button name="action_stop_mqtt_processing" string="Stop MQTT" type="object" class="oe_highlight" invisible="not show_start_mqtt" />
+        <button name="action_start_mqtt_processing" string="Start MQTT Processing" type="object" class="oe_highlight" invisible="not show_start_mqtt" />
+        <button name="action_stop_mqtt_processing" string="Stop MQTT Processing" type="object" class="btn-warning" invisible="state != 'mqtt_processing'" />
+      </xpath>
+      <xpath expr="//notebook" position="inside">
+        <page string="MQTT Processing" name="mqtt_processing" invisible="not is_mqtt_product">
+          <group>
+            <group string="Task Information">
+              <field name="mqtt_task_id" readonly="1"/>
+              <field name="mqtt_binary_payload" readonly="1"/>
+              <field name="selected_robot_id" domain="[('id', 'in', available_robot_ids)]" invisible="state == 'mqtt_processing'"/>
+              <field name="available_robot_ids" invisible="1"/>
+            </group>
+          </group>
+          <group string="Status Information" invisible="state != 'mqtt_processing'">
+            <div class="alert alert-info" role="alert">
+              <strong>MQTT Processing Active:</strong> The system is automatically processing work orders through MQTT. 
+              Individual work order operations are blocked during this process.
+            </div>
+          </group>
+          <group string="MQTT Configuration" invisible="state == 'mqtt_processing'">
+            <div class="alert alert-warning" role="alert" invisible="not show_start_mqtt">
+              <strong>Ready for MQTT Processing:</strong> Click "Start MQTT Processing" to begin automated processing.
+            </div>
+            <div class="alert alert-success" role="alert" invisible="show_start_mqtt or not mqtt_task_id">
+              <strong>MQTT Processing Completed:</strong> Task has been processed successfully.
+            </div>
+            <div class="alert alert-info" role="alert" invisible="state != 'draft' or not mqtt_task_id">
+              <strong>MQTT Processing Available:</strong> Production is in draft state. You can start MQTT processing or use standard manufacturing flow.
+            </div>
+          </group>
+        </page>
       </xpath>
     </field>
   </record>

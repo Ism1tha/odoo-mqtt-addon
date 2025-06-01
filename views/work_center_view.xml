@@ -4,14 +4,21 @@
     <field name="model">mrp.workcenter</field>
     <field name="inherit_id" ref="mrp.mrp_workcenter_view"/>
     <field name="arch" type="xml">
-      <xpath expr="//notebook" position="after">
+      <xpath expr="//sheet" position="inside">
         <notebook>
-          <page string="MQTT" name="mqtt">
+          <page string="MQTT Configuration" name="mqtt">
             <group>
-              <field name="has_robots"/>
-              <field name="robot_ids"/>
-              <field name="mqtt_topic"/>
+              <group>
+                <field name="has_robots"/>
+                <field name="mqtt_topic" placeholder="e.g., F1/W1/PKG1" required="has_robots"/>
+              </group>
+              <group>
+                <field name="robot_ids" invisible="not has_robots"/>
+              </group>
             </group>
+            <div class="alert alert-info" role="alert" invisible="not has_robots">
+              <strong>MQTT Topic Format:</strong> Use a clear hierarchical format like Factory/Warehouse/PickingCode (e.g., F1/W1/PKG1)
+            </div>
           </page>
         </notebook>
       </xpath>
