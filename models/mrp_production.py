@@ -198,14 +198,7 @@ class MrpProduction(models.Model):
             'odooProductionId': str(self.id),
             'mqttTopic': mqtt_topic,
             'binaryPayload': binary_payload,
-            'priority': 'normal',
-            'robotId': self.selected_robot_id.identifier if self.selected_robot_id else None,
-            'metadata': {
-                'productionName': self.name,
-                'productName': self.product_id.name,
-                'workCenterName': self.workorder_ids[0].workcenter_id.name if self.workorder_ids else None,
-                'robotName': self.selected_robot_id.name if self.selected_robot_id else None
-            }
+            'priority': 'normal'
         }
         
         try:
