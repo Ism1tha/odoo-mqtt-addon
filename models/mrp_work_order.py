@@ -1,14 +1,22 @@
-from odoo import models, fields, api
-from odoo.exceptions import UserError
+# -*- coding: utf-8 -*-
 
 import logging
+
+from odoo import models
+from odoo.exceptions import UserError
+
 _logger = logging.getLogger(__name__)
 
 
 class MrpWorkorder(models.Model):
     _inherit = 'mrp.workorder'
 
+    # ===========================
+    # BUTTON OVERRIDE METHODS
+    # ===========================
+
     def button_start(self):
+        """Override to block individual work order start when MQTT processing is enabled."""
         if self._should_block_workorder_action():
             raise UserError(
                 'Individual work order operations are blocked when MQTT processing is enabled. '
@@ -17,6 +25,7 @@ class MrpWorkorder(models.Model):
         return super().button_start()
 
     def button_finish(self):
+        """Override to block individual work order finish when MQTT processing is enabled."""
         if self._should_block_workorder_action():
             raise UserError(
                 'Individual work order operations are blocked when MQTT processing is enabled. '
@@ -25,6 +34,7 @@ class MrpWorkorder(models.Model):
         return super().button_finish()
 
     def button_pending(self):
+        """Override to block individual work order pending when MQTT processing is enabled."""
         if self._should_block_workorder_action():
             raise UserError(
                 'Individual work order operations are blocked when MQTT processing is enabled. '
@@ -33,6 +43,7 @@ class MrpWorkorder(models.Model):
         return super().button_pending()
 
     def button_done(self):
+        """Override to block individual work order done when MQTT processing is enabled."""
         if self._should_block_workorder_action():
             raise UserError(
                 'Individual work order operations are blocked when MQTT processing is enabled. '
@@ -41,6 +52,7 @@ class MrpWorkorder(models.Model):
         return super().button_done()
 
     def action_cancel(self):
+        """Override to block individual work order cancel when MQTT processing is enabled."""
         if self._should_block_workorder_action():
             raise UserError(
                 'Individual work order operations are blocked when MQTT processing is enabled. '
@@ -48,7 +60,17 @@ class MrpWorkorder(models.Model):
             )
         return super().action_cancel()
 
+    # ===========================
+    # PRIVATE METHODS
+    # ===========================
+
     def _should_block_workorder_action(self):
+        """
+        Determine if work order actions should be blocked due to MQTT processing.
+        
+        Returns:
+            bool: True if actions should be blocked, False otherwise
+        """
         production = self.production_id
         if not production:
             return False
@@ -68,7 +90,10 @@ class MrpWorkorder(models.Model):
         is_mqtt_processing = production.state == 'mqtt_processing'
         
         if should_use_mqtt or is_mqtt_processing:
-            _logger.info(f"Blocking work order {self.id} action - Production {production.id} uses MQTT processing")
+            _logger.info(
+                f"Blocking work order {self.id} action - "
+                f"Production {production.id} uses MQTT processing"
+            )
             return True
             
         return False

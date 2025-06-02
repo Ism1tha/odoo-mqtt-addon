@@ -1,4 +1,5 @@
 /** @odoo-module **/
+
 import { patch } from '@web/core/utils/patch';
 import { FormController } from '@web/views/form/form_controller';
 import { onMounted, useEffect } from '@odoo/owl';
@@ -33,7 +34,6 @@ patch(FormController.prototype, {
     useEffect(
       () => {
         if (this.model.config.resModel === 'mrp.production') {
-          console.log('Record data changed');
           updateButtonsVisibility();
         }
       },

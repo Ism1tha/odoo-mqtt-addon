@@ -1,1 +1,8 @@
-from . import mrp_production, mrp_work_center, mrp_work_order, res_config_settings, robot, product_template
+# -*- coding: utf-8 -*-
+
+from . import mrp_production
+from . import mrp_work_center
+from . import mrp_work_order
+from . import res_config_settings
+from . import robot
+from . import product_template

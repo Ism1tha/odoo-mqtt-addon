@@ -16,8 +16,10 @@
                 <field name="robot_ids" invisible="not has_robots"/>
               </group>
             </group>
+
             <div class="alert alert-info" role="alert" invisible="not has_robots">
-              <strong>MQTT Topic Format:</strong> Use a clear hierarchical format like Factory/Warehouse/PickingCode (e.g., F1/W1/PKG1)
+              <strong>MQTT Topic Format:</strong> 
+              Use a clear hierarchical format like Factory/Warehouse/PickingCode (e.g., F1/W1/PKG1)
             </div>
           </page>
         </notebook>
