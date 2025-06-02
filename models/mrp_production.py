@@ -129,9 +129,11 @@ class MrpProduction(models.Model):
             if not mqtt_topic:
                 raise UserError('No MQTT topic configured for work centers.')
             
+            complete_mqtt_topic = f"{mqtt_topic}/{production.selected_robot_id.identifier}"
+            
             binary_payload = production._generate_binary_payload()
             
-            task_data = production._create_api_task(mqtt_topic, binary_payload)
+            task_data = production._create_api_task(complete_mqtt_topic, binary_payload)
             
             if task_data:
                 production.write({
@@ -141,7 +143,7 @@ class MrpProduction(models.Model):
                 })
                 
                 production.message_post(
-                    body=f"MQTT Task created - ID: {task_data.get('id')} | Payload: {binary_payload} | Topic: {mqtt_topic} | Robot: {production.selected_robot_id.name}",
+                    body=f"MQTT Task created - ID: {task_data.get('id')} | Payload: {binary_payload} | Topic: {complete_mqtt_topic} | Robot: {production.selected_robot_id.name}",
                     message_type='comment'
                 )
             else:
