@@ -1,5 +1,7 @@
 # 🚀 Odoo MQTT Integration - Development Environment
 
+![MQTT Integration Preview](https://i.imgur.com/VZcKDRJ.png)
+
 > ⚠️ **Early Access Version** - This project is currently in active development. While functional, it may contain bugs and breaking changes. Use with caution in production environments.
 
 A Docker-based development environment for Odoo with MQTT integration capabilities, designed to help you **kickstart your custom Odoo module development** with minimal setup.
@@ -15,6 +17,7 @@ A Docker-based development environment for Odoo with MQTT integration capabiliti
 - **Docker secrets** for safe password management
 - **Volume mounts** for configuration, extra addons, and persistent data
 - **MQTT Integration Support**: Ready for custom MQTT addon development
+- **Demo Data**: Sample products and materials for quick testing
 
 ---
 
@@ -42,6 +45,20 @@ docker compose up -d
 ```
 
 > The first launch might take a bit while images are downloaded and Odoo is initialized.
+
+### 4. Import Demo Data (Optional)
+
+For faster development environment setup, import the provided demo data:
+
+1. Access Odoo at `http://localhost:8069`
+2. Navigate to **Inventory > Products**
+3. Go to **Favorites > Import records**
+4. Import the CSV files in order:
+   - `demo_data/demo_data_1.csv` (Actions)
+   - `demo_data/demo_data_2.csv` (Result Products)
+   - `demo_data/demo_data_3.csv` (Materials)
+
+This will create sample products with MQTT integration fields pre-configured for testing.
 
 ---
 
@@ -91,7 +108,6 @@ This environment is ready for MQTT addon development. To add MQTT capabilities:
 
 1. Install the [Odoo MQTT Integration Addon](https://github.com/Ism1tha/odoo-mqtt-addon)
 2. Configure your MQTT broker connection
-3. Set up the companion [MQTT API](https://github.com/your-repo/odoo-mqtt-api)
 
 ---
 
@@ -119,7 +135,6 @@ docker compose down -v
 - Make sure `odoo_pg_pass` is stored safely and not pushed to public repositories
 - Odoo will use the `demo_enterprise` database by default
 - This setup is **not intended for production** use
-- Works seamlessly with the [MQTT API companion project](https://github.com/your-repo/odoo-mqtt-api)
 
 ---
 
