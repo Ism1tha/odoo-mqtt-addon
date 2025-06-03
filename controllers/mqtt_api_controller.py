@@ -13,6 +13,45 @@ class MQTTAPIController(http.Controller):
     _inherit = 'http.controller'
 
     # ===========================
+    # AUTHENTICATION METHODS
+    # ===========================
+
+    def _check_authentication(self):
+        """Check if the request is authenticated based on configuration."""
+        config = request.env['ir.config_parameter'].sudo()
+        auth_enabled = config.get_param('mqtt_integration.mqtt_api_authentication_enabled', 'False')
+        
+        if auth_enabled != 'True':
+            return True  # Authentication is disabled
+        
+        auth_password = config.get_param('mqtt_integration.mqtt_api_authentication_password', '')
+        if not auth_password:
+            _logger.warning("Authentication is enabled but no password is configured")
+            return False
+        
+        # Check Authorization header
+        auth_header = request.httprequest.headers.get('Authorization', '')
+        if not auth_header.startswith('Bearer '):
+            _logger.warning(f"Missing or invalid Authorization header format. Received: '{auth_header[:50]}...' (truncated)")
+            return False
+        
+        provided_token = auth_header.replace('Bearer ', '', 1)
+        if provided_token != auth_password:
+            _logger.warning("Invalid authentication token provided")
+            return False
+        
+        return True
+
+    def _unauthorized_response(self):
+        """Generate an unauthorized response."""
+        response = json.dumps({
+            'status': 'error',
+            'message': 'Unauthorized access',
+            'timestamp': self._get_timestamp()
+        })
+        return request.make_response(response, status=401, headers={'Content-Type': 'application/json'})
+
+    # ===========================
     # API ENDPOINTS
     # ===========================
 
@@ -20,6 +59,10 @@ class MQTTAPIController(http.Controller):
     def update_production_status(self, **kwargs):
         """Update manufacturing order status from MQTT API with improved queue integration."""
         try:
+            # Check authentication first
+            if not self._check_authentication():
+                return self._unauthorized_response()
+
             try:
                 data = json.loads(request.httprequest.data.decode('utf-8'))
             except (json.JSONDecodeError, UnicodeDecodeError) as e:
@@ -156,7 +199,7 @@ class MQTTAPIController(http.Controller):
             'message': message,
             'timestamp': self._get_timestamp()
         })
-        return response
+        return request.make_response(response, headers={'Content-Type': 'application/json'})
 
     def _error_response(self, message):
         """Generate a standardized error response."""
@@ -165,7 +208,7 @@ class MQTTAPIController(http.Controller):
             'message': message,
             'timestamp': self._get_timestamp()
         })
-        return response
+        return request.make_response(response, headers={'Content-Type': 'application/json'})
 
     def _get_timestamp(self):
         """Get current timestamp in ISO format."""
@@ -180,6 +223,14 @@ class MQTTAPIController(http.Controller):
     def health_check(self, **kwargs):
         """Health check endpoint for MQTT API integration."""
         try:
+            # Check authentication for health check too
+            if not self._check_authentication():
+                return {
+                    'status': 'unauthorized',
+                    'message': 'Authentication required',
+                    'timestamp': self._get_timestamp()
+                }
+
             env = request.env(user=1)
             
             production_count = env['mrp.production'].search_count([])
