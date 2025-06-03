@@ -204,6 +204,8 @@ class MrpProduction(models.Model):
                     'No Bill of Materials (BOM) defined.'
                 )
             
+            production._check_material_stock_availability()
+            
             work_center = production.workorder_ids[0].workcenter_id
             if not work_center.robot_ids:
                 raise UserError(
@@ -718,3 +720,48 @@ class MrpProduction(models.Model):
         except Exception as e:
             _logger.error(f"Error completing work order {work_order.id}: {e}")
             work_order.write({'state': 'done'})
+
+    # ===========================
+    # STOCK AVAILABILITY METHODS
+    # ===========================
+
+    def _check_material_stock_availability(self):
+        """Check if sufficient stock is available for all materials before starting MQTT process."""
+        if not self.bom_id or not self.bom_id.bom_line_ids:
+            _logger.warning(f"No BOM or components found for production {self.id}")
+            return
+        
+        stock_location = self.env.ref('stock.stock_location_stock')
+        insufficient_materials = []
+        
+        for bom_line in self.bom_id.bom_line_ids:
+            material_product = bom_line.product_id
+            
+            if material_product.product_tmpl_id.mqtt_product_type != 'material':
+                continue
+            
+            # Get current stock quantity
+            stock_quant = self.env['stock.quant'].search([
+                ('product_id', '=', material_product.id),
+                ('location_id', '=', stock_location.id)
+            ])
+            
+            current_stock = sum(quant.quantity for quant in stock_quant)
+            required_qty = bom_line.product_qty * self.product_qty
+            
+            if current_stock < required_qty:
+                insufficient_materials.append({
+                    'product': material_product.name,
+                    'required': required_qty,
+                    'available': current_stock,
+                    'missing': required_qty - current_stock
+                })
+        
+        if insufficient_materials:
+            error_msg = "Insufficient stock for the following materials:\n"
+            for material in insufficient_materials:
+                error_msg += f"• {material['product']}: Required {material['required']}, Available {material['available']}, Missing {material['missing']}\n"
+            
+            raise UserError(error_msg)
+        
+        _logger.info(f"Stock availability check passed for production {self.id}")
