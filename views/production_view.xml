@@ -20,11 +20,14 @@
       <xpath expr="//header//button[@name='action_cancel']" position="attributes">
         <attribute name="invisible">is_mqtt_product</attribute>
       </xpath>
+      <xpath expr="//header//button[@name='do_unreserve']" position="attributes">
+        <attribute name="invisible">is_mqtt_product</attribute>
+      </xpath>
 
       <!-- Add MQTT processing buttons -->
       <xpath expr="//header" position="inside">
         <button name="action_start_mqtt_processing" string="Start MQTT Processing" type="object" class="oe_highlight" invisible="not show_start_mqtt"/>
-        <button name="action_stop_mqtt_processing" string="Stop MQTT Processing" type="object" class="btn-warning" invisible="state != 'mqtt_processing'"/>
+        <button name="action_stop_mqtt_processing" string="Stop MQTT Processing" type="object" class="btn-warning" invisible="1"/>
       </xpath>
 
       <!-- Add MQTT Processing tab -->

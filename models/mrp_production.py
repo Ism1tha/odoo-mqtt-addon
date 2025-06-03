@@ -131,6 +131,14 @@ class MrpProduction(models.Model):
             )
         return super().button_plan()
 
+    def button_unplan(self):
+        """Override to block unplanning when MQTT processing is required."""
+        if self._should_block_action():
+            raise UserError(
+                'Manufacturing actions are blocked when MQTT processing is enabled for this product type.'
+            )
+        return super().button_unplan()
+
     def action_assign(self):
         """Override to block assignment when MQTT processing is required."""
         if self._should_block_action():
@@ -276,6 +284,7 @@ class MrpProduction(models.Model):
         return ''.join(str(bit) for bit in result_binary)
 
     def _create_api_task(self, mqtt_topic, binary_payload):
+        """Create a new task through the Node.js API."""
         config = self.env['ir.config_parameter'].sudo()
         
         host = config.get_param('mqtt_integration.mqtt_api_host', 'localhost')
@@ -305,7 +314,7 @@ class MrpProduction(models.Model):
             return None
 
     def _delete_api_task(self, task_id):
-        """Delete a task from the Node.js API"""
+        """Delete a task from the Node.js API."""
         config = self.env['ir.config_parameter'].sudo()
         
         host = config.get_param('mqtt_integration.mqtt_api_host', 'localhost')
