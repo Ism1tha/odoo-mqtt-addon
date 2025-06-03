@@ -593,22 +593,11 @@ class MrpProduction(models.Model):
                         'company_id': self.company_id.id,
                     })
             
-            stock_move = self.env['stock.move'].create({
-                'name': f'MQTT Material Consumption - {self.name}',
+            self.env['stock.quant'].with_context(inventory_mode=True).create({
                 'product_id': product.id,
-                'product_uom_qty': quantity,
-                'product_uom': product.uom_id.id,
                 'location_id': stock_location.id,
-                'location_dest_id': production_location.id,
-                'origin': self.name,
-                'company_id': self.company_id.id,
+                'quantity': -quantity,
             })
-            
-            stock_move._action_confirm()
-            stock_move._action_assign()
-            for move_line in stock_move.move_line_ids:
-                move_line.write({'quantity': quantity})
-            stock_move._action_done()
             
             _logger.info(
                 f"Decreased stock for material {product.name} by {quantity} units"
@@ -624,35 +613,12 @@ class MrpProduction(models.Model):
         """Increase result product stock by specified quantity."""
         try:
             stock_location = self.env.ref('stock.stock_location_stock')
-            try:
-                production_location = self.env.ref('stock.location_production')
-            except:
-                production_location = self.env['stock.location'].search([
-                    ('usage', '=', 'production')
-                ], limit=1)
-                if not production_location:
-                    production_location = self.env['stock.location'].create({
-                        'name': 'Virtual Production',
-                        'usage': 'production',
-                        'company_id': self.company_id.id,
-                    })
             
-            stock_move = self.env['stock.move'].create({
-                'name': f'MQTT Production Output - {self.name}',
+            self.env['stock.quant'].with_context(inventory_mode=True).create({
                 'product_id': product.id,
-                'product_uom_qty': quantity,
-                'product_uom': product.uom_id.id,
-                'location_id': production_location.id,
-                'location_dest_id': stock_location.id,
-                'origin': self.name,
-                'company_id': self.company_id.id,
+                'location_id': stock_location.id,
+                'quantity': quantity,
             })
-            
-            stock_move._action_confirm()
-            stock_move._action_assign()
-            for move_line in stock_move.move_line_ids:
-                move_line.write({'quantity': quantity})
-            stock_move._action_done()
             
             _logger.info(
                 f"Increased stock for result product {product.name} by {quantity} units"
