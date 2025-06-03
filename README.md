@@ -1,83 +1,132 @@
-# MQTT Integration - Odoo MQTT Interface
+# 🚀 Odoo MQTT Integration - Development Environment
 
-## Description
+> ⚠️ **Early Access Version** - This project is currently in active development. While functional, it may contain bugs and breaking changes. Use with caution in production environments.
 
-This Odoo MQTT addon (`mqtt_integration`) is developed as part of a collaborative project between the **Web Development (DAW)** and **Robotics** specializations at **Institut Montsià**.
+A Docker-based development environment for Odoo with MQTT integration capabilities, designed to help you **kickstart your custom Odoo module development** with minimal setup.
 
-It provides an intuitive Odoo interface designed for operators to efficiently manage robots within the system via MQTT. The addon streamlines robot management by offering an organized platform where operators can monitor, control, and configure robots as needed.
+> **Related Project**: [Odoo MQTT API](https://github.com/your-repo/odoo-mqtt-api) - The Node.js API that works with this Odoo environment
 
-- Custom project management tools tailored for DAW and Robotics collaboration.
-- Automation features to streamline workflow processes.
-- Integration with MQTT for real-time robot communication.
-- Odoo interface to generate and manage work orders.
-- Modular and extensible architecture for future enhancements.
+---
 
-## Installation
+## 📦 What's Inside
 
-### Option 1: Download from Releases (Recommended)
+- **Odoo (latest)** with developer mode and auto-update enabled
+- **PostgreSQL 15** as the database backend
+- **Docker secrets** for safe password management
+- **Volume mounts** for configuration, extra addons, and persistent data
+- **MQTT Integration Support**: Ready for custom MQTT addon development
 
-1. Go to the [Releases](https://github.com/Ism1tha/odoo-mqtt-addon/releases) page.
-2. Download the latest `mqtt_integration-x.x.x.zip` file.
-3. Extract the zip file to your Odoo `addons` directory.
-4. Restart the Odoo server.
-5. Activate _Developer Mode_ in Odoo.
-6. Go to the **Apps** menu, click _Update Apps List_, and search for "MQTT Integration".
-7. Click _Install_ on the **Odoo MQTT Interface** addon.
+---
 
-### Option 2: Manual Installation
+## 🚀 Quick Setup
 
-1. Go to your Odoo `addons` directory.
-2. Create a new folder named `mqtt_integration`.
-3. Place the contents of this repository inside that folder.
-4. Restart the Odoo server.
-5. Activate _Developer Mode_ in Odoo.
-6. Go to the **Apps** menu, click _Update Apps List_, and search for "MQTT Integration".
-7. Click _Install_ on the **Odoo MQTT Interface** addon.
+### 1. Clone the Repository
 
-## Usage
+```bash
+git clone git@github.com:Ism1tha/odoo-environment-template.git
+cd odoo-environment-template
+```
 
-1. Navigate to the **MQTT Integration** section in the Odoo interface.
-2. Configure the MQTT settings to connect to the robots.
-3. Generate work orders directly through the Odoo interface.
-4. Manage the workflow and automate communication with the robots via MQTT.
+### 2. Add the PostgreSQL Password Secret
 
-## Features
+Create a file named `odoo_pg_pass` at the root containing your PostgreSQL password:
 
-- **MQTT Integration**: Real-time communication with manufacturing robots via MQTT protocol.
-- **Robot Management**: Configure and monitor robots through the Odoo interface.
-- **Production Order Automation**: Automatic MQTT communication for production processes.
-- **Work Center Configuration**: Set up MQTT topics for different work centers.
-- **Product Template MQTT Settings**: Configure MQTT parameters at the product level.
+```
+your_strong_password
+```
 
-## Releases
+### 3. Launch the Environment
 
-This project uses automated releases through GitHub Actions. When a new tag is pushed to the repository:
+```bash
+docker compose up -d
+```
 
-1. A new release is automatically created on GitHub.
-2. The addon is packaged as `mqtt_integration-{version}.zip`.
-3. The release includes all necessary files for easy installation in Odoo.
+> The first launch might take a bit while images are downloaded and Odoo is initialized.
 
-To stay updated with the latest version, check the [Releases](https://github.com/Ism1tha/odoo-mqtt-addon/releases) page regularly.
+---
 
-## Related Projects
+## 📊 Configuration Overview
 
-This addon works in conjunction with the **Odoo MQTT API** for complete MQTT integration:
+| Path / Variable   | Description                           | Default           |
+| ----------------- | ------------------------------------- | ----------------- |
+| `./addons/`       | Your custom Odoo modules go here      | -                 |
+| `./config/`       | Optional Odoo configuration directory | -                 |
+| `8069`            | Port exposed for accessing Odoo       | `8069`            |
+| `demo_enterprise` | Default database name                 | `demo_enterprise` |
+| `odoo_pg_pass`    | File containing PostgreSQL password   | -                 |
 
-- **[Odoo MQTT API](https://github.com/Ism1tha/odoo-mqtt-api)**: A Node.js/TypeScript API server that handles MQTT communication between Odoo and manufacturing robots. This API provides endpoints for task management, robot simulation, and real-time communication bridging.
+---
 
-## Contribution
+## 📂 Directory Structure
 
-Contributions are welcome! If you’d like to improve the addon, please follow these steps:
+```
+.
+├── addons/                 # Your custom addons
+├── config/                 # (Optional) Odoo config files
+├── odoo_pg_pass            # Secret password file
+└── docker-compose.yml
+```
 
-1. Fork the repository.
-2. Create a new branch.
-3. Make your modifications and commit.
-4. Push to your branch and create a Pull Request.
+---
 
-## License
+## 🛠️ Developer Mode
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+The Odoo container runs with:
 
-## Contact
+```bash
+odoo -d demo_enterprise --update=all --dev=all
+```
 
-For questions or suggestions, feel free to open an issue or reach out to the project maintainers.
+This enables:
+
+- Full developer tools
+- Auto-update of all modules at startup
+- Debug mode for development
+
+---
+
+## 🧪 MQTT Integration Development
+
+This environment is ready for MQTT addon development. To add MQTT capabilities:
+
+1. Install the [Odoo MQTT Integration Addon](https://github.com/Ism1tha/odoo-mqtt-addon)
+2. Configure your MQTT broker connection
+3. Set up the companion [MQTT API](https://github.com/your-repo/odoo-mqtt-api)
+
+---
+
+## 🧼 Stop & Clean Up
+
+To stop and remove containers, volumes, and networks:
+
+```bash
+docker compose down -v
+```
+
+---
+
+## 🆘 Troubleshooting
+
+- **Database connection issues**: Check `odoo_pg_pass` file exists and contains the correct password
+- **Addon not loading**: Ensure your addon is in `./addons/` directory
+- **Port conflicts**: Make sure port 8069 is not already in use
+- **Permission issues**: Check Docker has proper permissions to access volumes
+
+---
+
+## 📣 Notes
+
+- Make sure `odoo_pg_pass` is stored safely and not pushed to public repositories
+- Odoo will use the `demo_enterprise` database by default
+- This setup is **not intended for production** use
+- Works seamlessly with the [MQTT API companion project](https://github.com/your-repo/odoo-mqtt-api)
+
+---
+
+## 📄 License
+
+MIT License – do whatever you want, just don't blame me if your Odoo breaks 😉
+
+---
+
+**Happy Coding! 🛠️✨**
